@@ -3,7 +3,7 @@
 一个纯浏览器实现的离线文件传输工具，通过二维码序列在没有网络连接的环境下传输文件。
 
 ![系统截图](https://img.shields.io/badge/状态-稳定运行-green)
-![版本](https://img.shields.io/badge/版本-1.2-blue)
+![版本](https://img.shields.io/badge/版本-1.0-blue)
 ![浏览器支持](https://img.shields.io/badge/浏览器-Chrome%2C%20Firefox%2C%20Safari-blue)
 ![许可证](https://img.shields.io/badge/许可证-MIT-lightgrey)
 
@@ -11,12 +11,12 @@
 
 ```
 离线文件二维码传输系统/
-├── 发送/                    # 发送端程序
+├── send/                    # 发送端程序
 │   ├── send.html          # 发送端主文件
 │   └── js/                # 发送端依赖库
 │       ├── pako.min.js    # 压缩库
 │       └── qrcode.min.js  # 二维码生成库
-└── 接收/                    # 接收端程序
+└── receiver/                    # 接收端程序
     ├── receiver.html      # 接收端主文件
     └── js/                # 接收端依赖库
         ├── index.min.js   # ZXing二维码扫描库
