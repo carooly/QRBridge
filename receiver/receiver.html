@@ -402,23 +402,6 @@
 
         <!-- 浮动提示容器 -->
         <div id="floatingContainer"></div>
-        
-        <!-- 扫描窗口 -->
-        <div id="scanSection" class="scan-section">
-            <div class="scan-window">
-                <button id="closeScanBtn" class="scan-close-btn">×</button>
-                <div class="video-container">
-                    <video id="videoElement" playsinline></video>
-                    <div class="scan-overlay">
-                        <div class="scan-frame"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="scan-tips">
-                <p>正方形扫描窗口 | ZXing 0.21.3 最新版</p>
-                <p>先扫描数据二维码，最后扫描文件名二维码</p>
-            </div>
-        </div>
 
         <div class="card">
             <div class="section-title">📷 1. 扫描设置</div>
@@ -438,6 +421,23 @@
                 <button id="submitManualBtn" class="btn btn-primary">
                     ✅ 提交数据
                 </button>
+            </div>
+        </div>
+
+        <!-- 扫描窗口 -->
+        <div id="scanSection" class="scan-section">
+            <div class="scan-window">
+                <button id="closeScanBtn" class="scan-close-btn">×</button>
+                <div class="video-container">
+                    <video id="videoElement" playsinline></video>
+                    <div class="scan-overlay">
+                        <div class="scan-frame"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="scan-tips">
+                <p>正方形扫描窗口 | ZXing 0.21.3 最新版</p>
+                <p>先扫描数据二维码，最后扫描文件名二维码</p>
             </div>
         </div>
 
