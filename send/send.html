@@ -324,10 +324,24 @@
             </div>
         </div>
         
-        <div class="control-section">
+        <div class="control-section"> 
             <h3>4. 生成二维码</h3>
             <button id="startBtn">🚀 开始生成二维码序列</button>
+            <button id="fullscreenBtn" disabled>📺 全屏显示二维码</button>
             <button id="resetBtn">🔄 重置</button>
+        </div>
+
+        <!-- 全屏二维码容器 -->
+        <div id="fullscreenQRContainer" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; flex-direction: column; align-items: center; justify-content: center;">
+            <button id="closeFullscreenBtn" style="position: absolute; top: 20px; right: 20px; width: 50px; height: 50px; font-size: 24px; background: #e74c3c; color: white; border: none; border-radius: 50%; cursor: pointer; z-index: 10001;">×</button>
+            <div style="display: flex; align-items: center; justify-content: center; width: 100%; max-width: 1200px; margin: 0 auto;">
+                <button id="prevQRBtn" style="width: 60px; height: 60px; font-size: 32px; background: #3498db; color: white; border: none; border-radius: 50%; cursor: pointer; margin-right: 30px;">‹</button>
+                <div id="fullscreenQRContent" style="flex: 1; text-align: center; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(255,255,255,0.1);">
+                    <img id="fullscreenQRImage" style="display: block; margin: 0 auto 20px;" alt="二维码">
+                    <div id="fullscreenQRInfo" style="text-align: center;"></div>
+                </div>
+                <button id="nextQRBtn" style="width: 60px; height: 60px; font-size: 32px; background: #3498db; color: white; border: none; border-radius: 50%; cursor: pointer; margin-left: 30px;">›</button>
+            </div>
         </div>
         
         <div id="status" class="status info">请选择一个文件</div>
@@ -523,10 +537,20 @@
         const qrSizeSlider = document.getElementById('qrSizeSlider');
         const qrSizeValue = document.getElementById('qrSizeValue');
         const startBtn = document.getElementById('startBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
         const resetBtn = document.getElementById('resetBtn');
         const qrcodeContainer = document.getElementById('qrcodeContainer');
         const progressInfo = document.getElementById('progressInfo');
         const status = document.getElementById('status');
+        
+        // 全屏二维码相关元素
+        const fullscreenQRContainer = document.getElementById('fullscreenQRContainer');
+        const closeFullscreenBtn = document.getElementById('closeFullscreenBtn');
+        const prevQRBtn = document.getElementById('prevQRBtn');
+        const nextQRBtn = document.getElementById('nextQRBtn');
+        const fullscreenQRImage = document.getElementById('fullscreenQRImage');
+        const fullscreenQRInfo = document.getElementById('fullscreenQRInfo');
+        let fullscreenCurrentIndex = 0;
 
         // ==================== 事件处理 ====================
         
@@ -805,6 +829,7 @@
             showSuccess(`二维码生成完成! 共 ${totalQRCodes} 个二维码，请按顺序扫描`);
             startBtn.disabled = false;
             startBtn.textContent = '🚀 开始生成二维码序列';
+            fullscreenBtn.disabled = false; // 启用全屏按钮
             
             console.log('=== 二维码生成完成 ===');
             console.log(`共生成 ${totalQRCodes} 个二维码`);
@@ -1013,6 +1038,7 @@
             qrCodeDataUrls = [];
             fileNameQrCode = null;
             currentChunkIndex = 0;
+            fullscreenCurrentIndex = 0;
             fileInfo.style.display = 'none';
             fingerprintInfo.style.display = 'none';
             qrcodeContainer.innerHTML = '<p style="color: #7f8c8d; padding: 50px 0;">二维码将在此处显示...</p>';
@@ -1020,6 +1046,7 @@
             showInfo('请选择一个文件');
             startBtn.disabled = false;
             startBtn.textContent = '🚀 开始生成二维码序列';
+            fullscreenBtn.disabled = true;
             chunkSizeSlider.value = 900;
             chunkSizeValue.textContent = '900 字节';
             CONFIG.CHUNK_SIZE = 900;
@@ -1027,6 +1054,125 @@
             qrSizeValue.textContent = '500 像素';
             CONFIG.QR_DISPLAY_SIZE = 500;
             estimatedChunks.textContent = '--';
+        });
+
+        // ==================== 全屏显示二维码功能 ====================
+        
+        // 显示全屏二维码
+        function showFullscreenQR() {
+            if (qrCodeDataUrls.length === 0) {
+                showError('没有可显示的二维码');
+                return;
+            }
+            
+            fullscreenQRContainer.style.display = 'flex';
+            updateFullscreenQR();
+        }
+
+        // 隐藏全屏二维码
+        function hideFullscreenQR() {
+            fullscreenQRContainer.style.display = 'none';
+        }
+
+        // 更新全屏二维码内容
+        function updateFullscreenQR() {
+            if (fullscreenCurrentIndex >= 0 && fullscreenCurrentIndex < qrCodeDataUrls.length) {
+                // 设置二维码图片大小为原始显示大小
+                fullscreenQRImage.src = qrCodeDataUrls[fullscreenCurrentIndex];
+                fullscreenQRImage.style.width = CONFIG.QR_DISPLAY_SIZE + 'px';
+                fullscreenQRImage.style.height = CONFIG.QR_DISPLAY_SIZE + 'px';
+                
+                // 生成与原始样式相同的信息HTML
+                let infoHTML = '';
+                const jsonStr = fullscreenCurrentIndex < chunks.length ? 
+                    JSON.stringify(chunks[fullscreenCurrentIndex]) : 
+                    JSON.stringify(fileNameQrCode);
+                
+                if (fullscreenCurrentIndex < chunks.length) {
+                    // 数据分片
+                    const chunk = chunks[fullscreenCurrentIndex];
+                    infoHTML = `
+                        <strong>数据分片 ${chunk.i + 1}/${chunk.t}</strong><br>
+                        <small>指纹: ${chunk.f}</small><br>
+                        <small>校验: ${chunk.h}</small><br>
+                        <small>${jsonStr.length} 字节</small><br>
+                        <div class="debug-info" style="font-family: monospace; font-size: 12px; background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 3px solid #6c757d;">
+                            类型:data 长度:${jsonStr.length}B 数据:${chunk.d ? chunk.d.length : 0}B
+                        </div>
+                    `;
+                } else {
+                    // 文件名分片
+                    const encodedName = fileNameQrCode.n || '';
+                    const displayName = encodedName.length > 30 ? 
+                        encodedName.substring(0, 30) + '...' : 
+                        encodedName;
+                    infoHTML = `
+                        <strong style="color:#ff9800;">📄 文件名分片</strong><br>
+                        <small>指纹: ${fileNameQrCode.f}</small><br>
+                        <small>编码名: ${displayName}</small><br>
+                        <small>大小: ${formatFileSize(fileNameQrCode.s)}</small><br>
+                        <small>${jsonStr.length} 字节</small><br>
+                        <div class="debug-info" style="font-family: monospace; font-size: 12px; background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 3px solid #6c757d;">
+                            类型:fn 长度:${jsonStr.length}B 文件:${fileNameQrCode.n ? fileNameQrCode.n.length : 0}字符
+                        </div>
+                    `;
+                }
+                
+                // 应用原始样式的CSS
+                fullscreenQRInfo.innerHTML = `
+                    <div style="color: #333; font-family: 'Segoe UI', system-ui, sans-serif;">
+                        ${infoHTML}
+                        <div style="margin-top: 15px; color: #666; font-size: 14px;">
+                            第 ${fullscreenCurrentIndex + 1}/${qrCodeDataUrls.length} 个二维码
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // 上一个二维码
+        function prevQR() {
+            if (fullscreenCurrentIndex > 0) {
+                fullscreenCurrentIndex--;
+                updateFullscreenQR();
+            }
+        }
+
+        // 下一个二维码
+        function nextQR() {
+            if (fullscreenCurrentIndex < qrCodeDataUrls.length - 1) {
+                fullscreenCurrentIndex++;
+                updateFullscreenQR();
+            }
+        }
+
+        // 全屏按钮事件
+        fullscreenBtn.addEventListener('click', showFullscreenQR);
+
+        // 关闭全屏按钮事件
+        closeFullscreenBtn.addEventListener('click', hideFullscreenQR);
+
+        // 上一个二维码按钮事件
+        prevQRBtn.addEventListener('click', prevQR);
+
+        // 下一个二维码按钮事件
+        nextQRBtn.addEventListener('click', nextQR);
+
+        // 键盘事件支持
+        document.addEventListener('keydown', function(e) {
+            if (fullscreenQRContainer.style.display === 'flex') {
+                switch(e.key) {
+                    case 'Escape':
+                        hideFullscreenQR();
+                        break;
+                    case 'ArrowLeft':
+                        prevQR();
+                        break;
+                    case 'ArrowRight':
+                        nextQR();
+                        break;
+                }
+            }
         });
 
         // ==================== 页面初始化 ====================
