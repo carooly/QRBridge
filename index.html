@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>离线文件二维码传输系统 - V1.0</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            max-width: 1000px; 
+            margin: 20px auto; 
+            padding: 20px;
+            background: #f5f7fa;
+            color: #333;
+        }
+        .container { 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            padding: 30px; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            border-bottom: 3px solid #3498db; 
+            padding-bottom: 10px;
+        }
+        .subtitle { 
+            color: #7f8c8d; 
+            margin-bottom: 30px; 
+            font-size: 16px;
+        }
+        h2 { 
+            color: #2c3e50; 
+            margin: 30px 0 15px; 
+            border-bottom: 2px solid #ecf0f1; 
+            padding-bottom: 8px;
+        }
+        h3 { 
+            color: #34495e; 
+            margin: 20px 0 10px;
+        }
+        p { 
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        ul, ol { 
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        li { 
+            margin: 8px 0;
+        }
+        code { 
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #e74c3c;
+        }
+        pre { 
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+            margin: 15px 0;
+        }
+        pre code { 
+            background: transparent;
+            padding: 0;
+            color: #333;
+        }
+        table { 
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        th, td { 
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th { 
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { 
+            background: #f8f9fa;
+        }
+        a { 
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover { 
+            text-decoration: underline;
+        }
+        .badge { 
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .badge-success { 
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-blue { 
+            background: #cce7ff;
+            color: #004085;
+        }
+        .badge-grey { 
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        .button-section { 
+            margin: 30px 0;
+            text-align: center;
+        }
+        .btn { 
+            display: inline-block;
+            padding: 14px 36px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, #3498db, #2980b9); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #2980b9, #1c5d87); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+            text-decoration: none;
+        }
+        .btn-secondary { 
+            background: linear-gradient(135deg, #2ecc71, #27ae60); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+        .btn-secondary:hover { 
+            background: linear-gradient(135deg, #27ae60, #1e8449); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 204, 113, 0.4);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 离线文件二维码传输系统</h1>
+        <p class="subtitle">一个纯浏览器实现的离线文件传输工具，通过二维码序列在没有网络连接的环境下传输文件。</p>
+        
+        <!-- 添加超链接 -->
+        <div class="button-section">
+            <a href="send/send.html" class="btn btn-primary">📤 进入发送端</a>
+            <a href="receiver/receiver.html" class="btn btn-secondary">📥 进入接收端</a>
+        </div>
+        
+        <p>
+            <span class="badge badge-success">状态-稳定运行</span>
+            <span class="badge badge-blue">版本-1.0</span>
+            <span class="badge badge-blue">浏览器-Chrome, Firefox, Safari</span>
+            <span class="badge badge-grey">许可证-MIT</span>
+        </p>
+        
+        <h2>📁 项目结构</h2>
+        
+        <pre><code>离线文件二维码传输系统/
+├── send/                    # 发送端程序
+│   ├── send.html          # 发送端主文件
+│   └── js/                # 发送端依赖库
+│       ├── pako.min.js    # 压缩库
+│       └── qrcode.min.js  # 二维码生成库
+└── receiver/                    # 接收端程序
+    ├── receiver.html      # 接收端主文件
+    └── js/                # 接收端依赖库
+        ├── index.min.js   # ZXing二维码扫描库
+        ├── localforage.min.js # 本地存储库
+        └── pako.min.js    # 解压缩库</code></pre>
+        
+        <h2>✨ 核心功能</h2>
+        
+        <ul>
+            <li>🌐 <strong>纯浏览器实现</strong> - 无需安装，无需服务器</li>
+            <li>📶 <strong>完全离线工作</strong> - 不需要网络连接</li>
+            <li>🔒 <strong>安全传输</strong> - CRC32校验确保数据完整性</li>
+            <li>📁 <strong>支持各种文件</strong> - 文本、图片、文档、压缩包等</li>
+            <li>🇨🇳 <strong>中文友好</strong> - 完美支持中文文件名</li>
+            <li>💾 <strong>断点续传</strong> - 自动保存进度，中断后可继续</li>
+            <li>📱 <strong>移动端适配</strong> - 支持手机扫描电脑屏幕</li>
+        </ul>
+        
+        <h2>🚀 快速开始</h2>
+        
+        <h3>1. 下载项目</h3>
+        
+        <h3>2. 准备依赖库</h3>
+        <p>已为您准备好依赖库，直接使用即可：</p>
+        <ul>
+            <li><strong>发送端</strong>：<code>发送/js/</code> 目录已包含所需库文件</li>
+            <li><strong>接收端</strong>：<code>接收/js/</code> 目录已包含所需库文件</li>
+        </ul>
+        
+        <h3>3. 开始使用</h3>
+        <ul>
+            <li><strong>发送文件</strong>：直接打开 <code>发送/send.html</code></li>
+            <li><strong>接收文件</strong>：直接打开 <code>接收/receiver.html</code></li>
+        </ul>
+        
+        <h2>📖 使用教程</h2>
+        
+        <h3>发送端操作步骤</h3>
+        <ol>
+            <li><strong>打开发送页面</strong> - 双击 <code>发送/send.html</code></li>
+            <li><strong>选择文件</strong> - 点击"选择文件"按钮</li>
+            <li><strong>配置参数</strong> - 设置分片大小（推荐900字节）</li>
+            <li><strong>生成二维码</strong> - 点击"开始生成二维码序列"</li>
+            <li><strong>展示二维码</strong> - 按顺序展示所有二维码（文件名在最后）</li>
+        </ol>
+        
+        <h3>接收端操作步骤</h3>
+        <ol>
+            <li><strong>打开接收页面</strong> - 双击 <code>接收/receiver.html</code></li>
+            <li><strong>允许摄像头</strong> - 授权摄像头访问权限</li>
+            <li><strong>开始扫描</strong> - 点击"开始扫描二维码"</li>
+            <li><strong>按序扫描</strong> - 按顺序扫描所有二维码</li>
+            <li><strong>重组文件</strong> - 完成扫描后点击"重组文件"</li>
+            <li><strong>下载文件</strong> - 点击"下载文件"保存</li>
+        </ol>
+        
+        <h2>🎯 工作原理</h2>
+        
+        <h3>技术流程</h3>
+        <pre><code>文件 → 压缩 → 分片 → Base64 → CRC32校验 → 二维码 → 扫描 → 校验 → 重组 → 解压 → 文件</code></pre>
+        
+        <h3>数据格式</h3>
+        <ul>
+            <li><strong>数据分片</strong>：包含索引、总分片数、CRC32校验码、文件指纹和Base64数据</li>
+            <li><strong>文件名分片</strong>：单独二维码，包含编码后的文件名和文件信息</li>
+            <li><strong>CRC32校验</strong>：确保每个分片的数据完整性</li>
+        </ul>
+        
+        <h2>🛠️ 技术栈</h2>
+        
+        <table>
+            <tr>
+                <th>技术</th>
+                <th>用途</th>
+                <th>版本</th>
+            </tr>
+            <tr>
+                <td>HTML5</td>
+                <td>用户界面</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>JavaScript (ES6+)</td>
+                <td>业务逻辑</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>pako.js</td>
+                <td>文件压缩/解压</td>
+                <td>2.0+</td>
+            </tr>
+            <tr>
+                <td>QRCode.js</td>
+                <td>二维码生成</td>
+                <td>1.0+</td>
+            </tr>
+            <tr>
+                <td>ZXing</td>
+                <td>二维码扫描</td>
+                <td>0.21.3</td>
+            </tr>
+            <tr>
+                <td>localForage</td>
+                <td>本地存储</td>
+                <td>1.10+</td>
+            </tr>
+        </table>
+        
+        <h2>📊 性能表现</h2>
+        
+        <table>
+            <tr>
+                <th>文件大小</th>
+                <th>分片数量</th>
+                <th>预估时间</th>
+                <th>建议</th>
+            </tr>
+            <tr>
+                <td>≤100KB</td>
+                <td>10-20个</td>
+                <td>1-2分钟</td>
+                <td>快速传输</td>
+            </tr>
+            <tr>
+                <td>1MB</td>
+                <td>100-200个</td>
+                <td>5-10分钟</td>
+                <td>日常使用</td>
+            </tr>
+            <tr>
+                <td>5MB</td>
+                <td>500-1000个</td>
+                <td>25-50分钟</td>
+                <td>耐心等待</td>
+            </tr>
+            <tr>
+                <td>≥10MB</td>
+                <td>1000+个</td>
+                <td>1小时+</td>
+                <td>不推荐</td>
+            </tr>
+        </table>
+        
+        <h2>🔧 配置说明</h2>
+        
+        <h3>发送端配置</h3>
+        <pre><code>// 分片大小（字节）
+CHUNK_SIZE: 900        // 推荐值，范围：500-2000
+
+// 二维码尺寸（像素）
+QR_DISPLAY_SIZE: 500   // 显示尺寸
+QR_GENERATE_SIZE: 500  // 生成尺寸</code></pre>
+        
+        <h3>接收端配置</h3>
+        <pre><code>// 扫描设置
+扫描防抖: 1000ms        // 防止重复扫描
+自动保存: 启用          // 断点续传支持</code></pre>
+        
+        <h2>🌐 浏览器支持</h2>
+        
+        <table>
+            <tr>
+                <th>浏览器</th>
+                <th>发送端</th>
+                <th>接收端</th>
+                <th>备注</th>
+            </tr>
+            <tr>
+                <td>Chrome</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>最佳体验</td>
+            </tr>
+            <tr>
+                <td>Firefox</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>完全支持</td>
+            </tr>
+            <tr>
+                <td>Safari</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>需要iOS 11+</td>
+            </tr>
+            <tr>
+                <td>Edge</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>Chromium版本</td>
+            </tr>
+            <tr>
+                <td>移动浏览器</td>
+                <td>⚠️</td>
+                <td>✅</td>
+                <td>接收端体验佳</td>
+            </tr>
+        </table>
+        
+        <h2>🚨 常见问题</h2>
+        
+        <h3>Q: 扫描时摄像头黑屏？</h3>
+        <p><strong>A:</strong> 检查浏览器权限设置，确保允许摄像头访问。</p>
+        
+        <h3>Q: 二维码扫描失败？</h3>
+        <p><strong>A:</strong></p>
+        <ol>
+            <li>确保屏幕亮度足够</li>
+            <li>调整扫描距离（20-50cm）</li>
+            <li>避免反光和阴影</li>
+            <li>保持二维码在扫描框内</li>
+        </ol>
+        
+        <h3>Q: 中文文件名乱码？</h3>
+        <p><strong>A:</strong> 确保使用最新版本，系统已优化中文编码处理。</p>
+        
+        <h3>Q: 大文件传输太慢？</h3>
+        <p><strong>A:</strong></p>
+        <ol>
+            <li>适当增加分片大小</li>
+            <li>确保良好光线条件</li>
+            <li>分多次传输</li>
+        </ol>
+        
+        <h3>Q: 如何清除已接收数据？</h3>
+        <p><strong>A:</strong> 在接收端点击"清除数据"按钮。</p>
+        
+        <h2>🔍 高级功能</h2>
+        
+        <h3>断点续传</h3>
+        <p>系统自动保存扫描进度，即使关闭浏览器或中断扫描，下次打开时可继续从上次进度开始。</p>
+        
+        <h3>错误恢复</h3>
+        <ul>
+            <li>CRC32校验确保数据完整性</li>
+            <li>重复扫描检测避免数据冗余</li>
+            <li>详细错误提示帮助问题定位</li>
+        </ul>
+        
+        <h3>性能优化</h3>
+        <ul>
+            <li>分片大小自动计算</li>
+            <li>内存使用优化</li>
+            <li>渐进式处理避免卡顿</li>
+        </ul>
+        
+        <h2>🎨 应用场景</h2>
+        
+        <h3>典型使用场景：</h3>
+        <ol>
+            <li><strong>涉密环境</strong> - 禁止使用网络和USB的保密会议室</li>
+            <li><strong>网络隔离</strong> - 手术室、工业控制室等网络隔离环境</li>
+            <li><strong>教育演示</strong> - 教室、会议室快速分享课件</li>
+            <li><strong>野外作业</strong> - 无网络信号的户外环境</li>
+            <li><strong>跨系统传输</strong> - 不同操作系统间的文件传输</li>
+            <li><strong>临时分享</strong> - 会议现场临时分享文件</li>
+        </ol>
+        
+        <h2>📄 许可证</h2>
+        
+        <p>本项目采用 MIT 许可证 - 查看 <a href="LICENSE">LICENSE</a> 文件了解详情。</p>
+        
+        <h2>🙏 致谢</h2>
+        
+        <p>感谢以下开源项目的支持：</p>
+        <ul>
+            <li><a href="https://github.com/nodeca/pako">pako</a> - 高效的zlib实现</li>
+            <li><a href="https://github.com/davidshimjs/qrcodejs">QRCode.js</a> - 二维码生成库</li>
+            <li><a href="https://github.com/zxing-js/library">ZXing</a> - 二维码扫描库</li>
+            <li><a href="https://github.com/localForage/localForage">localForage</a> - 本地存储封装</li>
+        </ul>
+        
+        <h2>📞 支持与反馈</h2>
+        
+        <ul>
+            <li>📧 邮箱：wallech@foxmail.com</li>
+            <li>🐛 <a href="https://github.com/wallechfox/QRBridge/issues">提交Issue</a></li>
+            <li>💬 讨论区：<a href="https://github.com/wallechfox/QRBridge/discussions">GitHub Discussions</a></li>
+        </ul>
+        
+        <hr>
+        
+        <h3>⭐ 如果这个项目对您有帮助，请给个Star！</h3>
+        
+        <p>您的支持是我们持续改进的动力！</p>
+        
+        <p><strong>注意</strong>: 本项目仍在积极开发中，欢迎反馈和建议！</p>
+        
+        <hr>
+        
+        <p style="color: #7f8c8d; font-size: 14px;">最后更新: 2025年12月 | 版本: 1.0</p>
+    </div>
+</body>
+</html>
